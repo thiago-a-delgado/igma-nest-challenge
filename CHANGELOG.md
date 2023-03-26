@@ -1,0 +1,8 @@
+- Merge branch '02-basic-rules' into 03-documentation
+- bootstrap
+- compodoc install and partial config
+- Merge pull request #2 from thiago-a-delgado/basic-rules
+- routes, modeling and rules
+- Merge pull request #1 from thiago-a-delgado/01-nestjs-installation
+- nestjs install and config
+- Initial commit
