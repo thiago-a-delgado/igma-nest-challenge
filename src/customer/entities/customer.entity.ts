@@ -11,9 +11,9 @@ export class Customer extends BaseEntity {
   @Column({ name: 'name', type: 'varchar', length: 255 })
   name: string;
 
-  @Column({ name: 'cpf', type: 'varchar', length: 11 })
+  @Column({ name: 'cpf', type: 'varchar', length: 11, unique: true })
   cpf: string;
 
   @Column({ name: 'birth_date', type: 'date' })
-  birthdate: Date;
+  birthDate: Date;
 }
