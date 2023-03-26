@@ -15,7 +15,7 @@ customElements.define('compodoc-menu', class extends HTMLElement {
         <nav>
             <ul class="list">
                 <li class="title">
-                    <a href="index.html" data-type="index-link">Igma Challenge - API Documentation</a>
+                    <a href="index.html" data-type="index-link">igma-challenge-api documentation</a>
                 </li>
 
                 <li class="divider"></li>
@@ -162,9 +162,6 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                         <ul class="links collapse " ${ isNormalMode ? 'id="classes-links"' : 'id="xs-classes-links"' }>
                             <li class="link">
                                 <a href="classes/CreateCustomerDto.html" data-type="entity-link" >CreateCustomerDto</a>
-                            </li>
-                            <li class="link">
-                                <a href="classes/UpdateCustomerDto.html" data-type="entity-link" >UpdateCustomerDto</a>
                             </li>
                         </ul>
                     </li>

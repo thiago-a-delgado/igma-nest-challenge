@@ -4,14 +4,19 @@ import { Repository } from 'typeorm';
 import { CreateCustomerDto } from './dto/create-customer.dto';
 import { UpdateCustomerDto } from './dto/update-customer.dto';
 import { Customer } from './entities/customer.entity';
-import { ApiProperty } from '@nestjs/swagger';
 
 @Injectable()
 export class CustomerService {
 
   constructor(@InjectRepository(Customer) private readonly repository: Repository<Customer>) { }
 
-  create(createCustomerDto: CreateCustomerDto): Promise <Customer> {
+  async create(createCustomerDto: CreateCustomerDto): Promise <Customer> {
+    // Checks if already exists a customer with the same CPF
+    const existingCustomer = await this.repository.findOneBy({ cpf: createCustomerDto.cpf });
+    if (existingCustomer) {
+      throw new UnprocessableEntityException(`Customer with CPF '${createCustomerDto.cpf}' already exists.`);
+    }
+
     const customer = this.repository.create(createCustomerDto);
 
     return this.repository.save(customer);

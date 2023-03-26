@@ -22,6 +22,11 @@ export class CustomerController {
    */
   @Post()
   create(@Body() createCustomerDto: CreateCustomerDto): Promise<Customer> {
+    const cpf = createCustomerDto.cpf;
+    if (!IsValidCpf(cpf)) {
+      throw new UnprocessableEntityException(`Invalid CPF data or format: '${cpf}'.`);
+    }    
+    createCustomerDto.cpf = cpf.replace(/[^\d]+/g, '');
     return this.customerService.create(createCustomerDto);
   }
 
@@ -66,6 +71,11 @@ export class CustomerController {
    */
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateCustomerDto: UpdateCustomerDto): Promise<Customer> {
+    const cpf = updateCustomerDto.cpf;
+    if (!IsValidCpf(cpf)) {
+      throw new UnprocessableEntityException(`Invalid CPF data or format: '${cpf}'.`);
+    }     
+    updateCustomerDto.cpf = cpf.replace(/[^\d]+/g, '');
     return this.customerService.update(id, updateCustomerDto);
   }
 
