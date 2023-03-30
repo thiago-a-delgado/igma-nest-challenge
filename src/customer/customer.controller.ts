@@ -9,26 +9,49 @@ import { IsValidCpf} from '../helper/helper';
 @ApiTags('customer')
 @Controller('customer')
 export class CustomerController {
+  /**
+   * Constructor, initialize values of members in class
+   * @param CustomerService
+   */  
   constructor(private readonly customerService: CustomerService) {}
 
+  /**
+   * Creates a new customer in the database
+   * @param CreateCustomerDto
+   * @returns A promise with the customer register
+   */
   @Post()
-  create(@Body() createCustomerDto: CreateCustomerDto) {
+  create(@Body() createCustomerDto: CreateCustomerDto): Promise<Customer> {
     return this.customerService.create(createCustomerDto);
   }
 
+  /**
+   * Fetches the customers from the database
+   * @param page Page number in pagination
+   * @param limit Record number per page in pagination
+   * @returns A promise with the list of customers and the amount of registers found
+   */
   @Get()
   async findAll(@Query('page') page: number = 1, @Query('limit') limit: number = 10): Promise<{ data: Customer[]; total: number }> {
     return this.customerService.findAll(page, limit);
   }
 
+  /**
+   * Fetches the unique customer from the database, identified by id informed
+   * @param id An identifier of a customer. A customer with this id should exist in the database
+   * @returns A promise with the customer register
+   */
   @Get(':id')
-  findOne(@Param('id') id: string) {
+  findOne(@Param('id') id: string): Promise<Customer> {
     return this.customerService.findOne(id);
   }
 
+  /**
+   * Fetches the list of customers from the database, identified by cpf informed
+   * @param cpf An identifier of a brazilian person. A customer with this cpf should exist in the database
+   * @returns A promise with the list of customers
+   */
   @Get('cpf/:cpf')
-  @ApiProperty({ name: 'page', example: 2, description: 'Page number.', type: Number, default: 1 })
-  @ApiProperty({ name: 'limit', example: 10, description: 'Record number per page', type: Number, default: 10 })
   async findByCpf(@Param('cpf') cpf: string): Promise<Customer[]> {
     if (!IsValidCpf(cpf)) {
       throw new UnprocessableEntityException(`Invalid CPF data or format: '${cpf}'.`);
@@ -36,13 +59,23 @@ export class CustomerController {
     return await this.customerService.findByCpf(cpf);
   }  
 
+  /**
+   * Updates the customer in the database, identified by id
+   * @param id An identifier of a customer. A customer with this id should exist in the database
+   * @returns A promise with the customer register
+   */
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateCustomerDto: UpdateCustomerDto) {
+  update(@Param('id') id: string, @Body() updateCustomerDto: UpdateCustomerDto): Promise<Customer> {
     return this.customerService.update(id, updateCustomerDto);
   }
 
+  /**
+   * Deletes a customer from the database
+   * @param id An identifier of a customer. A customer with this id should exist in the database
+   * @returns A promise with the customer register 
+   */
   @Delete(':id')
-  remove(@Param('id') id: string) {
+  remove(@Param('id') id: string): Promise<Customer> {
     return this.customerService.remove(id);
   }
 }

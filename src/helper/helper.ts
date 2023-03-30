@@ -1,3 +1,8 @@
+/**
+ * Checks if the CPF entered is a valid number, according to the rules implemented by the RFB
+ * @param cpf A identifier of a brazilian citizen. This number is unique for each brazilian person.
+ * @returns boolean True or false
+ */
 export function IsValidCpf(cpf: string): boolean {
 
   // Checks the CPF length, which must be: 
