@@ -15,7 +15,7 @@ describe('AppController', () => {
   });
 
   describe('root', () => {
-    it('should return "Hello World!"', () => {
+    it('should return "Igma Challenge API"', () => {
       expect(appController.getWelcome()).toBe('Igma Challenge API');
     });
   });

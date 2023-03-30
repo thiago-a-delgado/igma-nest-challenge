@@ -60,6 +60,13 @@
         </p>
 
 
+            <p class="comment">
+                <h3>Description</h3>
+            </p>
+            <p class="comment">
+                <p>Entity that represents a customer in the system.</p>
+
+            </p>
 
 
             <section>
@@ -79,6 +86,9 @@
                             </li>
                             <li>
                                 <a href="#cpf" >cpf</a>
+                            </li>
+                            <li>
+                                <a href="#createdAt" >createdAt</a>
                             </li>
                             <li>
                                 <a href="#id" >id</a>
@@ -135,10 +145,16 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="18" class="link-to-prism">src/customer/entities/customer.entity.ts:18</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="43" class="link-to-prism">src/customer/entities/customer.entity.ts:43</a></div>
                         </td>
                     </tr>
 
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Date of birth of the customer</p>
+</div>
+                </td>
+            </tr>
 
         </tbody>
     </table>
@@ -170,10 +186,57 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="15" class="link-to-prism">src/customer/entities/customer.entity.ts:15</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="37" class="link-to-prism">src/customer/entities/customer.entity.ts:37</a></div>
                         </td>
                     </tr>
 
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>CPF (Brazilian Document Registry) of the customer</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="createdAt"></a>
+                    <span class="name">
+                        <span ><b>createdAt</b></span>
+                        <a href="#createdAt"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date" target="_blank" >Date</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <b>Decorators : </b>
+                        <br />
+                        <code>
+                            @CreateDateColumn({name: &#x27;created_at&#x27;, type: &#x27;timestamp&#x27;, default: () &#x3D;&gt; CURRENT_TIMESTAMP(6)})<br />
+                        </code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="19" class="link-to-prism">src/customer/entities/customer.entity.ts:19</a></div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Date when the customer was created</p>
+</div>
+                </td>
+            </tr>
 
         </tbody>
     </table>
@@ -205,10 +268,16 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="6" class="link-to-prism">src/customer/entities/customer.entity.ts:6</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="13" class="link-to-prism">src/customer/entities/customer.entity.ts:13</a></div>
                         </td>
                     </tr>
 
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Unique identifier of the customer</p>
+</div>
+                </td>
+            </tr>
 
         </tbody>
     </table>
@@ -240,10 +309,16 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="12" class="link-to-prism">src/customer/entities/customer.entity.ts:12</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="31" class="link-to-prism">src/customer/entities/customer.entity.ts:31</a></div>
                         </td>
                     </tr>
 
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Name of the customer</p>
+</div>
+                </td>
+            </tr>
 
         </tbody>
     </table>
@@ -269,16 +344,22 @@
                         <b>Decorators : </b>
                         <br />
                         <code>
-                            @UpdateDateColumn({name: &#x27;updated_at&#x27;, type: &#x27;timestamptz&#x27;, default: () &#x3D;&gt; CURRENT_TIMESTAMP})<br />
+                            @UpdateDateColumn({name: &#x27;updated_at&#x27;, type: &#x27;timestamp&#x27;, default: () &#x3D;&gt; CURRENT_TIMESTAMP(6)})<br />
                         </code>
                     </td>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="9" class="link-to-prism">src/customer/entities/customer.entity.ts:9</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="25" class="link-to-prism">src/customer/entities/customer.entity.ts:25</a></div>
                         </td>
                     </tr>
 
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Date when the customer was last updated</p>
+</div>
+                </td>
+            </tr>
 
         </tbody>
     </table>
@@ -287,22 +368,47 @@
 
 
     <div class="tab-pane fade  tab-source-code" id="c-source">
-        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { BaseEntity, Column, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from &quot;typeorm&quot;;
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { BaseEntity, Column, Entity, PrimaryGeneratedColumn, UpdateDateColumn, CreateDateColumn, BeforeInsert } from &quot;typeorm&quot;;
 
+/**
+ * Entity that represents a customer in the system.
+ */
 @Entity()
 export class Customer extends BaseEntity {
+
+  /**
+   * Unique identifier of the customer
+   */
   @PrimaryGeneratedColumn(&#x27;uuid&#x27;)
   id: string;
 
-  @UpdateDateColumn({ name: &#x27;updated_at&#x27;, type: &#x27;timestamptz&#x27;, default: () &#x3D;&gt; &#x27;CURRENT_TIMESTAMP&#x27; })
+  /**
+   * Date when the customer was created
+   */
+  @CreateDateColumn({ name: &#x27;created_at&#x27;, type: &quot;timestamp&quot;, default: () &#x3D;&gt; &quot;CURRENT_TIMESTAMP(6)&quot; })
+  createdAt: Date;
+
+  /**
+   * Date when the customer was last updated
+   */
+  @UpdateDateColumn({ name: &#x27;updated_at&#x27;, type: &#x27;timestamp&#x27;, default: () &#x3D;&gt; &#x27;CURRENT_TIMESTAMP(6)&#x27; })
   updatedAt: Date;
 
+  /**
+   * Name of the customer
+   */
   @Column({ name: &#x27;name&#x27;, type: &#x27;varchar&#x27;, length: 255 })
   name: string;
 
+  /**
+   * CPF (Brazilian Document Registry) of the customer
+   */
   @Column({ name: &#x27;cpf&#x27;, type: &#x27;varchar&#x27;, length: 11, unique: true })
   cpf: string;
 
+  /**
+   * Date of birth of the customer
+   */
   @Column({ name: &#x27;birth_date&#x27;, type: &#x27;date&#x27; })
   birthDate: Date;
 }

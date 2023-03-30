@@ -1,14 +1,19 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Query, UnprocessableEntityException } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query, UnprocessableEntityException, HttpCode, HttpStatus } from '@nestjs/common';
 import { CustomerService } from './customer.service';
 import { Customer } from './entities/customer.entity';
 import { CreateCustomerDto } from './dto/create-customer.dto';
 import { UpdateCustomerDto } from './dto/update-customer.dto';
-import { ApiProperty, ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiProperty, ApiTags } from '@nestjs/swagger';
 import { IsValidCpf} from '../helper/helper';
 
+/**
+ * Customer's controller, with methods for handling customer's requests
+ * @class CreateCustomerDto
+ */
 @ApiTags('customer')
 @Controller('customer')
 export class CustomerController {
+
   /**
    * Constructor, initialize values of members in class
    * @param CustomerService
@@ -21,12 +26,9 @@ export class CustomerController {
    * @returns A promise with the customer register
    */
   @Post()
+  @ApiOperation({ description: 'Create a new customer' })
+  @HttpCode(HttpStatus.CREATED)
   create(@Body() createCustomerDto: CreateCustomerDto): Promise<Customer> {
-    const cpf = createCustomerDto.cpf;
-    if (!IsValidCpf(cpf)) {
-      throw new UnprocessableEntityException(`Invalid CPF data or format: '${cpf}'.`);
-    }    
-    createCustomerDto.cpf = cpf.replace(/[^\d]+/g, '');
     return this.customerService.create(createCustomerDto);
   }
 

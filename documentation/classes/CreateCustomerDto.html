@@ -66,6 +66,13 @@
         </p>
 
 
+            <p class="comment">
+                <h3>Description</h3>
+            </p>
+            <p class="comment">
+                <p>Definition of information that will be transmitted about new customers in requests</p>
+
+            </p>
 
 
 
@@ -138,10 +145,16 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="18" class="link-to-prism">src/customer/dto/create-customer.dto.ts:18</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="35" class="link-to-prism">src/customer/dto/create-customer.dto.ts:35</a></div>
                         </td>
                     </tr>
 
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Customer&#39;s date of birth</p>
+</div>
+                </td>
+            </tr>
 
         </tbody>
     </table>
@@ -173,10 +186,16 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="13" class="link-to-prism">src/customer/dto/create-customer.dto.ts:13</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="26" class="link-to-prism">src/customer/dto/create-customer.dto.ts:26</a></div>
                         </td>
                     </tr>
 
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Customer&#39;s CPF, a brazilian national document</p>
+</div>
+                </td>
+            </tr>
 
         </tbody>
     </table>
@@ -208,10 +227,16 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="8" class="link-to-prism">src/customer/dto/create-customer.dto.ts:8</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="17" class="link-to-prism">src/customer/dto/create-customer.dto.ts:17</a></div>
                         </td>
                     </tr>
 
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Customer&#39;s name</p>
+</div>
+                </td>
+            </tr>
 
         </tbody>
     </table>
@@ -230,17 +255,34 @@
         <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { IsNotEmpty, IsString, IsDateString } from &#x27;class-validator&#x27;;
 import { ApiProperty } from &#x27;@nestjs/swagger&#x27;;
 
+/**
+ * Definition of information that will be transmitted about new customers in requests
+ * @class CreateCustomerDto
+ */
 export class CreateCustomerDto {
+
+  /**
+   * Customer&#x27;s name
+   * @@property name
+   */
   @ApiProperty({ example: &#x27;Thiago Delgado&#x27;, description: &#x27;Customer\&#x27;s name.&#x27;, type: String })
   @IsString()
   @IsNotEmpty()
   name: string;
 
+  /**
+   * Customer&#x27;s CPF, a brazilian national document
+   * @property cpf
+   */
   @ApiProperty({ example: &#x27;498.967.060-42&#x27;, description: &#x27;Number of brazilian identification - CPF.&#x27;, type: String })
   @IsString()
   @IsNotEmpty()
   cpf: string;
 
+  /**
+   * Customer&#x27;s date of birth
+   * @property birthDate
+   */
   @ApiProperty({ example: &#x27;1998-04-20&#x27;, description: &#x27;Birth of date, in &quot;yyyy-MM-dd format.&#x27;, type: String  })
   @IsDateString()
   @IsNotEmpty()

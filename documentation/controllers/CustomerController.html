@@ -66,6 +66,13 @@
             </p>
 
 
+            <p class="comment">
+                <h3>Description</h3>
+            </p>
+            <p class="comment">
+                <p>Customer&#39;s controller, with methods for handling customer&#39;s requests</p>
+
+            </p>
 
 
 
@@ -141,14 +148,14 @@
                 <td class="col-md-4">
                     <b>Decorators : </b>
                     <br />
-                    <code>@Post()<br /></code>
+                    <code>@Post()<br />@ApiOperation({description: &#x27;Create a new customer&#x27;})<br />@HttpCode(HttpStatus.CREATED)<br /></code>
                 </td>
             </tr>
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="24"
-                            class="link-to-prism">src/customer/customer.controller.ts:24</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="31"
+                            class="link-to-prism">src/customer/customer.controller.ts:31</a></div>
                 </td>
             </tr>
 
@@ -228,8 +235,8 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="35"
-                            class="link-to-prism">src/customer/customer.controller.ts:35</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="42"
+                            class="link-to-prism">src/customer/customer.controller.ts:42</a></div>
                 </td>
             </tr>
 
@@ -337,8 +344,8 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="55"
-                            class="link-to-prism">src/customer/customer.controller.ts:55</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="62"
+                            class="link-to-prism">src/customer/customer.controller.ts:62</a></div>
                 </td>
             </tr>
 
@@ -421,8 +428,8 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="45"
-                            class="link-to-prism">src/customer/customer.controller.ts:45</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="52"
+                            class="link-to-prism">src/customer/customer.controller.ts:52</a></div>
                 </td>
             </tr>
 
@@ -505,8 +512,8 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="78"
-                            class="link-to-prism">src/customer/customer.controller.ts:78</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="90"
+                            class="link-to-prism">src/customer/customer.controller.ts:90</a></div>
                 </td>
             </tr>
 
@@ -575,7 +582,7 @@
             </tr>
             <tr>
                 <td class="col-md-4">
-<code>update(id: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, updateCustomerDto: <a href="../entitys/Customer.html" target="_self">UpdateCustomerDto</a>)</code>
+<code>update(id: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, updateCustomerDto: <a href="../classes/UpdateCustomerDto.html" target="_self">UpdateCustomerDto</a>)</code>
                 </td>
             </tr>
 
@@ -589,8 +596,8 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="68"
-                            class="link-to-prism">src/customer/customer.controller.ts:68</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="75"
+                            class="link-to-prism">src/customer/customer.controller.ts:75</a></div>
                 </td>
             </tr>
 
@@ -632,7 +639,7 @@
                                 <tr>
                                     <td>updateCustomerDto</td>
                                     <td>
-                                                <code><a href="../entitys/Customer.html" target="_self" >UpdateCustomerDto</a></code>
+                                                <code><a href="../classes/UpdateCustomerDto.html" target="_self" >UpdateCustomerDto</a></code>
                                     </td>
 
                                     <td>
@@ -664,17 +671,22 @@
 
 
     <div class="tab-pane fade  tab-source-code" id="c-source">
-        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Controller, Get, Post, Body, Patch, Param, Delete, Query, UnprocessableEntityException } from &#x27;@nestjs/common&#x27;;
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Controller, Get, Post, Body, Patch, Param, Delete, Query, UnprocessableEntityException, HttpCode, HttpStatus } from &#x27;@nestjs/common&#x27;;
 import { CustomerService } from &#x27;./customer.service&#x27;;
 import { Customer } from &#x27;./entities/customer.entity&#x27;;
 import { CreateCustomerDto } from &#x27;./dto/create-customer.dto&#x27;;
 import { UpdateCustomerDto } from &#x27;./dto/update-customer.dto&#x27;;
-import { ApiProperty, ApiTags } from &#x27;@nestjs/swagger&#x27;;
+import { ApiOperation, ApiProperty, ApiTags } from &#x27;@nestjs/swagger&#x27;;
 import { IsValidCpf} from &#x27;../helper/helper&#x27;;
 
+/**
+ * Customer&#x27;s controller, with methods for handling customer&#x27;s requests
+ * @class CreateCustomerDto
+ */
 @ApiTags(&#x27;customer&#x27;)
 @Controller(&#x27;customer&#x27;)
 export class CustomerController {
+
   /**
    * Constructor, initialize values of members in class
    * @param CustomerService
@@ -687,6 +699,8 @@ export class CustomerController {
    * @returns A promise with the customer register
    */
   @Post()
+  @ApiOperation({ description: &#x27;Create a new customer&#x27; })
+  @HttpCode(HttpStatus.CREATED)
   create(@Body() createCustomerDto: CreateCustomerDto): Promise&lt;Customer&gt; {
     return this.customerService.create(createCustomerDto);
   }
@@ -732,6 +746,11 @@ export class CustomerController {
    */
   @Patch(&#x27;:id&#x27;)
   update(@Param(&#x27;id&#x27;) id: string, @Body() updateCustomerDto: UpdateCustomerDto): Promise&lt;Customer&gt; {
+    const cpf &#x3D; updateCustomerDto.cpf;
+    if (!IsValidCpf(cpf)) {
+      throw new UnprocessableEntityException(&#x60;Invalid CPF data or format: &#x27;${cpf}&#x27;.&#x60;);
+    }     
+    updateCustomerDto.cpf &#x3D; cpf.replace(/[^\d]+/g, &#x27;&#x27;);
     return this.customerService.update(id, updateCustomerDto);
   }
 
