@@ -1,14 +1,21 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Query, UnprocessableEntityException } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query, UnprocessableEntityException, HttpCode, HttpStatus, UseGuards } from '@nestjs/common';
 import { CustomerService } from './customer.service';
 import { Customer } from './entities/customer.entity';
 import { CreateCustomerDto } from './dto/create-customer.dto';
 import { UpdateCustomerDto } from './dto/update-customer.dto';
-import { ApiProperty, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiProperty, ApiTags } from '@nestjs/swagger';
 import { IsValidCpf} from '../helper/helper';
+import { AuthGuard } from 'src/auth/auth.guard';
 
+/**
+ * Customer's controller, with methods for handling customer's requests
+ * @class CreateCustomerDto
+ */
 @ApiTags('customer')
+@ApiBearerAuth('JWT-auth')
 @Controller('customer')
 export class CustomerController {
+
   /**
    * Constructor, initialize values of members in class
    * @param CustomerService
@@ -21,6 +28,8 @@ export class CustomerController {
    * @returns A promise with the customer register
    */
   @Post()
+  @ApiOperation({ description: 'Create a new customer' })
+  @HttpCode(HttpStatus.CREATED)
   create(@Body() createCustomerDto: CreateCustomerDto): Promise<Customer> {
     return this.customerService.create(createCustomerDto);
   }
@@ -31,6 +40,7 @@ export class CustomerController {
    * @param limit Record number per page in pagination
    * @returns A promise with the list of customers and the amount of registers found
    */
+  @UseGuards(AuthGuard)
   @Get()
   async findAll(@Query('page') page: number = 1, @Query('limit') limit: number = 10): Promise<{ data: Customer[]; total: number }> {
     return this.customerService.findAll(page, limit);
@@ -66,6 +76,11 @@ export class CustomerController {
    */
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateCustomerDto: UpdateCustomerDto): Promise<Customer> {
+    const cpf = updateCustomerDto.cpf;
+    if (!IsValidCpf(cpf)) {
+      throw new UnprocessableEntityException(`Invalid CPF data or format: '${cpf}'.`);
+    }     
+    updateCustomerDto.cpf = cpf.replace(/[^\d]+/g, '');
     return this.customerService.update(id, updateCustomerDto);
   }
 
