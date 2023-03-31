@@ -1,16 +1,18 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Query, UnprocessableEntityException, HttpCode, HttpStatus } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query, UnprocessableEntityException, HttpCode, HttpStatus, UseGuards } from '@nestjs/common';
 import { CustomerService } from './customer.service';
 import { Customer } from './entities/customer.entity';
 import { CreateCustomerDto } from './dto/create-customer.dto';
 import { UpdateCustomerDto } from './dto/update-customer.dto';
-import { ApiOperation, ApiProperty, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiProperty, ApiTags } from '@nestjs/swagger';
 import { IsValidCpf} from '../helper/helper';
+import { AuthGuard } from 'src/auth/auth.guard';
 
 /**
  * Customer's controller, with methods for handling customer's requests
  * @class CreateCustomerDto
  */
 @ApiTags('customer')
+@ApiBearerAuth('JWT-auth')
 @Controller('customer')
 export class CustomerController {
 
@@ -38,6 +40,7 @@ export class CustomerController {
    * @param limit Record number per page in pagination
    * @returns A promise with the list of customers and the amount of registers found
    */
+  @UseGuards(AuthGuard)
   @Get()
   async findAll(@Query('page') page: number = 1, @Query('limit') limit: number = 10): Promise<{ data: Customer[]; total: number }> {
     return this.customerService.findAll(page, limit);

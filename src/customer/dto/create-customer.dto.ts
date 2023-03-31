@@ -9,7 +9,7 @@ export class CreateCustomerDto {
 
   /**
    * Customer's name
-   * @@property name
+   * @property name
    */
   @ApiProperty({ example: 'Thiago Delgado', description: 'Customer\'s name.', type: String })
   @IsString()
