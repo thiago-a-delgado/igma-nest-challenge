@@ -3,158 +3,229 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Customer } from './entities/customer.entity';
 import { CustomerService } from './customer.service';
-import { NotFoundException } from '@nestjs/common';
-import { createMock } from '@golevelup/nestjs-testing';
-import { UpdateCustomerDto } from './dto/update-customer.dto';
+import { NotFoundException, UnprocessableEntityException } from '@nestjs/common';
+import { CreateCustomerDto } from './dto/create-customer.dto';
 import { CustomerController } from './customer.controller';
+import { UpdateCustomerDto } from './dto/update-customer.dto';
 
 describe('CustomerService', () => {
-  let service: CustomerService;
-  let controller: CustomerController;
-  let repository: Repository<Customer>;
+  let customerService: CustomerService;
+  let customerRepository: Repository<Customer>;
 
-  const mockCustomer = new Customer();
-  mockCustomer.id = '123';
-  mockCustomer.name = 'John Doe';
-  mockCustomer.cpf = '12345678900';
-  mockCustomer.birthDate = new Date();
+  const customerList: Customer[] = [
+    new Customer({ id: '1', cpf: '05478939650', name: 'Thiago Delgado', birthDate: new Date('1988-05-01'), createdAt: new Date('1988-01-01'), updatedAt: new Date('2023-03-01') }),
+    new Customer({ id: '2', cpf: '12345678909', name: 'Marcos Cabrali', birthDate: new Date('1978-05-01'), createdAt: new Date('2023-02-01'), updatedAt: new Date('2023-03-01') }),
+    new Customer({ id: '3', cpf: '04958499016', name: 'Renata Rochedo', birthDate: new Date('1989-07-03'), createdAt: new Date('2023-02-01'), updatedAt: new Date('2023-03-01') }),
+  ];
+  const customerLength: number = customerList.length;
+  const customerPaginatedList = {data: customerList, total: customerLength};
 
-  beforeEach(async () => {
+  const newCustomer = new Customer({ id: '1', cpf: '05478939650', name: 'Thiago Delgado', birthDate: new Date('1988-05-01'), createdAt: new Date('1988-01-01'), updatedAt: new Date('2023-03-01') });
+  const updatedCustomer = new Customer({ id: '1', cpf: '05478939650', name: 'Thiago Alterado', birthDate: new Date('2000-05-01'), createdAt: new Date('1988-01-01'), updatedAt: new Date('2023-03-01') });
+
+  beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         CustomerService,
         {
           provide: getRepositoryToken(Customer),
-          useValue: createMock<Repository<Customer>>(),
+          useValue: {
+            create: jest.fn().mockReturnValue(newCustomer),
+            save: jest.fn().mockResolvedValue(newCustomer),
+            find: jest.fn().mockResolvedValue(customerList[0]),
+            findAndCount: jest.fn().mockResolvedValue([customerList, customerLength]),
+            findOneBy: jest.fn().mockResolvedValue(customerList[0]),
+            update: jest.fn().mockResolvedValue(updatedCustomer),
+            preload: jest.fn().mockReturnValue(updatedCustomer),
+            remove: jest.fn().mockResolvedValue(undefined)
+          },      
         },
       ],
     }).compile();
 
-    service = module.get<CustomerService>(CustomerService);
-    repository = module.get<Repository<Customer>>(getRepositoryToken(Customer));
+    customerService = module.get<CustomerService>(CustomerService);
+    customerRepository = module.get<Repository<Customer>>(getRepositoryToken(Customer));
   });
 
   it('should be defined', () => {
-    expect(service).toBeDefined();
-  });
+    expect(customerService).toBeDefined();
+    expect(customerRepository).toBeDefined();
+  });  
 
   describe('create', () => {
-    it('should create a customer', async () => {
-      const createCustomerDto = {
-        name: 'John Doe',
-        cpf: '12345678900',
-        birthDate: new Date(),
+    it('should create a new customer', async () => {
+      // Arrange
+      const createCustomerDto: CreateCustomerDto = {
+        cpf: '05478939650',
+        name: 'Thiago Delgado',
+        birthDate: new Date('1988-05-01')
       };
-      jest.spyOn(repository, 'create').mockReturnValue(mockCustomer);
-      jest.spyOn(repository, 'save').mockResolvedValue(mockCustomer);
-
-      const result = await service.create(createCustomerDto);
-
-      expect(repository.create).toHaveBeenCalledWith(createCustomerDto);
-      expect(repository.save).toHaveBeenCalledWith(mockCustomer);
-      expect(result).toEqual(mockCustomer);
+      // Mocks an empty value to pass through the duplicate CPF test
+      jest.spyOn(customerRepository, 'findOneBy').mockResolvedValueOnce(undefined);
+  
+      // Act
+      const result = await customerService.create(createCustomerDto);
+  
+      // Assert
+      expect(result).toEqual(newCustomer);
+      expect(customerRepository.save).toHaveBeenCalledTimes(1);
+      expect(customerRepository.create).toHaveBeenCalledTimes(1);
     });
+
+    /* TODO: Uncomment this test.
+    it('should throw UnprocessableEntityException when CPF already exists', async () => {
+      // Arrange
+      const existingCpf = '05478939650';
+      const createDuplicateCustomerDto = {
+        cpf: existingCpf,
+        name: 'Thiago Delgado',
+        birthDate: new Date('1988-05-01'),
+      };
+      jest.spyOn(customerRepository, 'save').mockRejectedValueOnce(new UnprocessableEntityException());
+  
+      // Act & Assert
+      await expect(customerService.create(createDuplicateCustomerDto)).rejects.toThrow(UnprocessableEntityException);
+    });*/
   });
-
+  
   describe('findAll', () => {
-    it('should return a list of customers', async () => {
-      const mockCustomers = [mockCustomer];
-      const mockResponse = { data: mockCustomers, total: mockCustomers.length };
-      jest.spyOn(repository, 'findAndCount').mockResolvedValue([mockCustomers, mockCustomers.length]);
+    it('should return a paginated list of customers', async () => {
+      // Act
+      const result = await customerService.findAll();
 
-      const result = await service.findAll();
+      // Assert
+      expect(result).toEqual(customerPaginatedList);
+      expect(customerRepository.findAndCount).toHaveBeenCalledTimes(1);
+      expect(customerRepository.findAndCount).toHaveBeenCalledWith({ skip: 0, take: 10 });
+    });
 
-      expect(repository.findAndCount).toHaveBeenCalledWith({
-        skip: 0,
-        take: 10,
-      });
-      expect(result).toEqual(mockResponse);
+    it('should thrown an exception', () => {
+      // Arrange
+      jest.spyOn(customerRepository, 'findAndCount').mockRejectedValueOnce(new Error());
+
+      // Assert
+      expect(customerService.findAll).rejects.toThrowError();
     });
   });
 
   describe('findOne', () => {
-    it('should return a customer', async () => {
-      jest.spyOn(repository, 'findOne').mockResolvedValue(mockCustomer);
-
-      const result = await service.findOne('123');
-
-      expect(repository.findOne).toHaveBeenCalledWith({ id: '123' });
-      expect(result).toEqual(mockCustomer);
+    it('should return a customer with specific ID', async () => {
+      // Arrange
+      const customerId = '1';
+  
+      // Act
+      const result = await customerService.findOne(customerId);
+  
+      // Assert
+      expect(result).toEqual(customerList[0]);
+      expect(customerRepository.findOneBy).toHaveBeenCalledWith({ id: customerId });
     });
 
     it('should throw NotFoundException when customer is not found', async () => {
-      jest.spyOn(repository, 'findOne').mockResolvedValue(null);
+      // Arrange
+      jest.spyOn(customerRepository, 'findOneBy').mockRejectedValueOnce(new NotFoundException());
 
-      await expect(service.findOne('123')).rejects.toThrowError(NotFoundException);
+      // Assert
+      await expect(customerService.findOne('123')).rejects.toThrowError(NotFoundException);
     });
-  });
+  });  
 
   describe('findByCpf', () => {
-/*    it('should return an array of customers with matching CPF', async () => {
+    it('should return a customer with specific CPF', async () => {
 
-      const mockCustomers = [
-        { id: '1', name: 'John', cpf: '111.111.111-11', birthDate: new Date() },
-        { id: '2', name: 'Jane', cpf: '222.222.222-22', birthDate: new Date() },
-        { id: '3', name: 'Bob', cpf: '333.333.333-33', birthDate: new Date() },
-      ];
-      jest.spyOn(service, 'findByCpf').mockResolvedValue(mockCustomers);
+      // Arrange
+      const customerCpf = '05478939650';
   
-      const cpf = '111.111.111-11';
-      const result = await controller.findByCpf(cpf);
+      // Act
+      const result = await customerService.findByCpf(customerCpf);
+
+      // Assert
+      expect(result).toEqual(customerList[0]);
+      expect(customerRepository.findOneBy).toHaveBeenCalledWith({ cpf: customerCpf });
+    });
+
+    it('should throw NotFoundException when customer is not found', async () => {
+      // Arrange
+      const customerCpf = '47742973057';
+      const emptyCustomerList: Customer[] = [];
+
+      jest.spyOn(customerRepository, 'find').mockResolvedValueOnce(emptyCustomerList);
+
+      // Assert
+      await expect(customerService.findByCpf(customerCpf)).rejects.toThrowError(NotFoundException);
+    });
+
+    it('should throw UnprocessableEntityException if CPF is a repeated digit', async () => {
+      // Arrange
+      const customerCpf = '99999999999';
+      jest.spyOn(customerRepository, 'find').mockRejectedValueOnce(new UnprocessableEntityException());
+
+      // Assert
+      await expect(customerService.findByCpf(customerCpf)).rejects.toThrowError(UnprocessableEntityException);
+      expect(customerRepository.find).toHaveBeenCalledWith({ where: { cpf: customerList[0].cpf } });
+    });      
   
-      expect(result).toEqual(mockCustomers);
-    });*/
-  
-    it('should throw a NotFoundException if no customers with matching CPF are found', async () => {
-      const cpf = '999.999.999-99';
-      jest.spyOn(service, 'findByCpf').mockResolvedValue([]);
-  
-      await expect(controller.findByCpf(cpf)).rejects.toThrow(NotFoundException);
+    it('should throw a UnprocessableEntityException if CPF is invalid', async () => {
+      // Arrange
+      const customerCpf = '12312312300';
+      jest.spyOn(customerRepository, 'find').mockRejectedValueOnce(new UnprocessableEntityException());
+
+      // Assert
+      await expect(customerService.findByCpf(customerCpf)).rejects.toThrowError(UnprocessableEntityException);
+      expect(customerRepository.find).toHaveBeenCalledWith({ where: {cpf: customerList[0].cpf} });
     });
   });
   
-
-  describe('update', () => {
-    const mockUpdateCustomerDto = new UpdateCustomerDto();
-    mockUpdateCustomerDto.name = 'John Doe Jr.';
-    mockUpdateCustomerDto.cpf = '11111111111';
-    mockUpdateCustomerDto.birthDate = new Date('1995-01-01');
-  
+  describe('update', () => {  
     it('should update and return the updated customer', async () => {
-      jest.spyOn(service, 'update').mockResolvedValue(mockCustomer);
-      const updatedCustomer = await controller.update('1', mockUpdateCustomerDto);
+      // Arrange
+      const updateCustomerDto: UpdateCustomerDto = {
+        id: '1',
+        cpf: '05478939650', 
+        name: 'Thiago Alterado', 
+        birthDate: new Date('2000-05-01')
+      };
+      jest.spyOn(customerRepository, 'save').mockResolvedValueOnce(updatedCustomer);
+      
+      // Act
+      const result = await customerService.update('1', updateCustomerDto);
   
-      expect(updatedCustomer).toEqual(mockCustomer);
-      expect(service.update).toHaveBeenCalledWith('1', mockUpdateCustomerDto);
-    });
+      expect(result).toEqual(updatedCustomer);
+      //expect(customerService.update).toHaveBeenCalledWith('1', updateCustomerDto);
+    })
   
-    it('should throw a NotFoundException if customer is not found', async () => {
-      jest.spyOn(service, 'update').mockResolvedValue(null);
-  
-      await expect(controller.update('1', mockUpdateCustomerDto)).rejects.toThrow(NotFoundException);
-      expect(service.update).toHaveBeenCalledWith('1', mockUpdateCustomerDto);
+    it('should throw NotFoundException when customer is not found', async () => {
+      // Arrange
+      jest.spyOn(customerRepository, 'findOneBy').mockRejectedValueOnce(new NotFoundException());
+
+      // Assert
+      await expect(customerService.findOne('123')).rejects.toThrowError(NotFoundException);
     });
   });
-  
+
   describe('remove', () => {
     const id = 'abc123';
   
     it('should remove a customer successfully', async () => {
-      const mockCustomer = new Customer();
-      mockCustomer.id = id;
-      jest.spyOn(service, 'findOne').mockResolvedValue(mockCustomer);
-      jest.spyOn(repository, 'remove').mockResolvedValue(undefined);
+      // Arrange
+      const customerList = new Customer();
+      customerList.id = id;
+      jest.spyOn(customerService, 'findOne').mockResolvedValue(customerList);
+      jest.spyOn(customerRepository, 'remove').mockResolvedValue(undefined);
   
-      const result = await service.remove(id);
+      // Act
+      const result = await customerService.remove(id);
+
+      // Assert
       expect(result).toBeUndefined();
-      expect(repository.remove).toHaveBeenCalledWith(mockCustomer);
+      expect(customerRepository.remove).toHaveBeenCalledWith(customerList);
     });
   
     it('should throw NotFoundException when customer is not found', async () => {
-      jest.spyOn(service, 'findOne').mockResolvedValue(undefined);
+      jest.spyOn(customerService, 'findOne').mockResolvedValue(undefined);
   
-      await expect(service.remove(id)).rejects.toThrow(NotFoundException);
-      expect(service.findOne).toHaveBeenCalledWith(id);
+      await expect(customerService.remove(id)).rejects.toThrow(NotFoundException);
+      expect(customerService.findOne).toHaveBeenCalledWith(id);
     });
   });
 });

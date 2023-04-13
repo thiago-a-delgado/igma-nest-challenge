@@ -1,10 +1,22 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Query, UnprocessableEntityException, HttpCode, HttpStatus, UseGuards } from '@nestjs/common';
+import { 
+  Controller, 
+  Get, 
+  Post,
+  Body, 
+  Patch, 
+  Param, 
+  Delete, 
+  Query, 
+  UnprocessableEntityException, 
+  HttpCode, 
+  HttpStatus, 
+  UseGuards 
+} from '@nestjs/common';
 import { CustomerService } from './customer.service';
 import { Customer } from './entities/customer.entity';
 import { CreateCustomerDto } from './dto/create-customer.dto';
 import { UpdateCustomerDto } from './dto/update-customer.dto';
-import { ApiBearerAuth, ApiOperation, ApiProperty, ApiTags } from '@nestjs/swagger';
-import { IsValidCpf} from '../helper/helper';
+import { ApiBearerAuth, ApiOperation, ApiProperty, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from 'src/auth/auth.guard';
 
 /**
@@ -29,6 +41,14 @@ export class CustomerController {
    */
   @Post()
   @ApiOperation({ description: 'Create a new customer' })
+  @ApiResponse({
+    status: 201,
+    description: 'New customer successfully created.'
+  })
+  @ApiResponse({
+    status: 422,
+    description: 'Invalid parameters.'
+  })  
   @HttpCode(HttpStatus.CREATED)
   create(@Body() createCustomerDto: CreateCustomerDto): Promise<Customer> {
     return this.customerService.create(createCustomerDto);
@@ -40,7 +60,7 @@ export class CustomerController {
    * @param limit Record number per page in pagination
    * @returns A promise with the list of customers and the amount of registers found
    */
-  @UseGuards(AuthGuard)
+  //@UseGuards(AuthGuard)
   @Get()
   async findAll(@Query('page') page: number = 1, @Query('limit') limit: number = 10): Promise<{ data: Customer[]; total: number }> {
     return this.customerService.findAll(page, limit);
@@ -63,9 +83,6 @@ export class CustomerController {
    */
   @Get('cpf/:cpf')
   async findByCpf(@Param('cpf') cpf: string): Promise<Customer[]> {
-    if (!IsValidCpf(cpf)) {
-      throw new UnprocessableEntityException(`Invalid CPF data or format: '${cpf}'.`);
-    }
     return await this.customerService.findByCpf(cpf);
   }  
 
@@ -77,9 +94,6 @@ export class CustomerController {
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateCustomerDto: UpdateCustomerDto): Promise<Customer> {
     const cpf = updateCustomerDto.cpf;
-    if (!IsValidCpf(cpf)) {
-      throw new UnprocessableEntityException(`Invalid CPF data or format: '${cpf}'.`);
-    }     
     updateCustomerDto.cpf = cpf.replace(/[^\d]+/g, '');
     return this.customerService.update(id, updateCustomerDto);
   }
