@@ -48,14 +48,14 @@ describe('CustomerController', () => {
   describe('create', () => {
     it('should create a new customer', async () => {
       // Arrange
-      const body: CreateCustomerDto = {
+      const createCustomerDto: CreateCustomerDto = {
         name: 'Michele Silva',
         cpf: '80466916078',
         birthDate: new Date('1978-12-31'),
       };
 
       // Act
-      const result = await customerController.create(body);
+      const result = await customerController.create(createCustomerDto);
 
       // Assert
       expect(result).toBe(newCustomer);
@@ -63,7 +63,7 @@ describe('CustomerController', () => {
 
     it('should throw an exception for invalid CPF', async () => {
       // Arrange
-      const body: CreateCustomerDto = {
+      const createCustomerDto: CreateCustomerDto = {
         name: 'Jonas Souza',
         cpf: '80466916075',
         birthDate: new Date('1999-01-20'),
@@ -71,7 +71,7 @@ describe('CustomerController', () => {
       jest.spyOn(customerService, 'create').mockRejectedValueOnce(new UnprocessableEntityException());
 
       // Act
-      const result = customerController.create(body);
+      const result = customerController.create(createCustomerDto);
 
       // Assert
       expect(result).rejects.toThrowError(UnprocessableEntityException);
@@ -135,14 +135,15 @@ describe('CustomerController', () => {
   describe('update', () => {
     it('should return an updated customer', async () => {
       // Arrange
-      const body: UpdateCustomerDto = {
+      const updateCustomerDto: UpdateCustomerDto = {
+        id: '1',
         name: 'Thiago Alterado',
         cpf: '05478939650',
         birthDate: new Date('2000-05-01'),
       };
 
       // Act
-      const result = await customerController.update('1', body);
+      const result = await customerController.update('1', updateCustomerDto);
 
       // Assert
       expect(result).toEqual(updatedCustomer);
@@ -150,7 +151,8 @@ describe('CustomerController', () => {
 
     it('should throw an exception', async () => {
       // Arrange
-      const body: UpdateCustomerDto = {
+      const updateCustomerDto: UpdateCustomerDto = {
+        id: '1',
         name: 'Thiago Alterado',
         cpf: '05478939650',
         birthDate: new Date('2000-05-01'),
@@ -158,7 +160,7 @@ describe('CustomerController', () => {
       jest.spyOn(customerService, 'update').mockRejectedValueOnce(new Error());
 
       // Assert
-      expect(customerController.update('1', body)).rejects.toThrowError();
+      expect(customerController.update('1', updateCustomerDto)).rejects.toThrowError();
     });      
   });
   

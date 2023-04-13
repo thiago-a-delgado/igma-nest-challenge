@@ -11,7 +11,7 @@ import { ApiProperty } from "@nestjs/swagger";
 /**
  * Entity that represents a customer in the system.
  */
-@Entity( {name: 'customers'})
+@Entity( {name: 'customer'})
 export class Customer extends BaseEntity {
 
   /**
